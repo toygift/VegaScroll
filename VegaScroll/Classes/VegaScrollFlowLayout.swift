@@ -119,7 +119,7 @@ open class VegaScrollFlowLayout: UICollectionViewFlowLayout {
         
         let touchLocation = collectionView!.panGestureRecognizer.location(in: collectionView)
         
-        dynamicAnimator.behaviors.flatMap { $0 as? UIAttachmentBehavior }.forEach { behavior in
+        dynamicAnimator.behaviors.compactMap { $0 as? UIAttachmentBehavior }.forEach { behavior in
             let attrs = behavior.items.first as! UICollectionViewLayoutAttributes
             attrs.center = getUpdatedBehaviorItemCenter(behavior: behavior, touchLocation: touchLocation)
             self.dynamicAnimator.updateItem(usingCurrentState: attrs)
@@ -154,8 +154,8 @@ open class VegaScrollFlowLayout: UICollectionViewFlowLayout {
             let springBehaviour = UIAttachmentBehavior(item: item, attachedToAnchor: item.center)
             
             springBehaviour.length = 0.0
-            springBehaviour.damping = 0.8
-            springBehaviour.frequency = 1.0
+            springBehaviour.damping = 0.0
+            springBehaviour.frequency = 0.0
             
             if !CGPoint.zero.equalTo(touchLocation) {
                 item.center = getUpdatedBehaviorItemCenter(behavior: springBehaviour, touchLocation: touchLocation)
@@ -168,8 +168,8 @@ open class VegaScrollFlowLayout: UICollectionViewFlowLayout {
     
     private func getUpdatedBehaviorItemCenter(behavior: UIAttachmentBehavior,
                                               touchLocation: CGPoint) -> CGPoint {
-        let yDistanceFromTouch = fabs(touchLocation.y - behavior.anchorPoint.y)
-        let xDistanceFromTouch = fabs(touchLocation.x - behavior.anchorPoint.x)
+        let yDistanceFromTouch = abs(touchLocation.y - behavior.anchorPoint.y)
+        let xDistanceFromTouch = abs(touchLocation.x - behavior.anchorPoint.x)
         let scrollResistance = (yDistanceFromTouch + xDistanceFromTouch) / (springHardness * 100)
         
         let attrs = behavior.items.first as! UICollectionViewLayoutAttributes
